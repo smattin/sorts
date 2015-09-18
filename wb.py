@@ -1,4 +1,4 @@
-from collections import Counter,ChainMap
+from collections import Counter
 from random import randint
 """
 given list of ints, find random index of the max element
