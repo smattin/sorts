@@ -10,17 +10,22 @@ log = logging.getLogger(sys.argv[0].strip('.py'))
 
 # we would like to test and get performance stats for different algorithms
 @unique
-class Algorithm(Enum): # dup detection algorithms, given input constraints
-    # the only valid case with with no dups is range 1..n in any order
-    # n==1 obviously has no duplicates
+class Algorithm(Enum):
+    """
+    Duplicate integer array detection algorithms
 
-    SORTED_SCAN_SHORTCUT = "sort, scan for repeats, and break on first found"
-    SORTED_DUPS_LEN = "sort, filter creating dups list, and check it's length"
-    SEQ_SUM = "check sum against the well-known expression for sum of 1..n"
-    ITER_UTIL = "use iteration_utilities function for duplicates"
-    SET_LEN = "create set from array, eliminating dups, and check len == n"
+    given input constraints 1 <= a[i] and a[i] <= n  and n == len(a)
+    * the only valid case with with no dups is range 1..n in any order
+    * n==1 obviously has no duplicates
+    """
+    SORTED_SCAN_SHORTCUT = 'sort, scan for repeats, and break on first found'
+    SORTED_DUPS_LEN = 'sort, filter creating dups list, and check length'
+    SEQ_SUM = 'check sum against the well-known expression for sum of 1..n'
+    ITER_UTIL = '"use iteration_utilities function for duplicates'
+    SET_LEN = 'create set from array, eliminating dups, and check len == n'
 
 def sort_scan(n,s):
+    "for sorted array s, scan for repeats, breaking on first found"
     found = False
     for i in range(n-1):
         if s[i] == s[i+1]:
@@ -30,8 +35,12 @@ def sort_scan(n,s):
 
 sc_warn = True # only warn once for n == 1
 
-# determine if int array a has any dups
 def dups(n,a,algo=Algorithm.SEQ_SUM):
+    """
+    determine if int array a of length n has any dups, the using given algorithm
+
+    see test_dups.py
+    """
     # assert(0 < n) # we actually handle empty array, returning False
     assert(isinstance(n, int))
     assert(isinstance(a, list))
@@ -68,6 +77,9 @@ def dups(n,a,algo=Algorithm.SEQ_SUM):
     return found
 
 def main(argv):
+    """
+    duplicate detection with optional timing data for multiple algorithms
+    """
 
     algo_names = str([key for key in Algorithm.__members__])
     help = argv[0] +' --help' \
