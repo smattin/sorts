@@ -49,7 +49,7 @@ public class Anna {
         // Anna.debug.log(java.util.logging.Level.SEVERE,Arrays.toString(substring.toArray()));
 	for (int i=0; i<substring.size(); i++) {
 		
-	    for (int j=0; j<substring.size(); j++) {
+	    for (int j=i; j<substring.size(); j++) {
 
 		String s1 = substring.get(i);
 		String s2 = substring.get(j);
@@ -60,7 +60,7 @@ public class Anna {
 		}
             }
         }
-        return ret/2; // each pair is double counted, want unordered
+        return ret; // each pair is double counted, want unordered
     }
 
     private static final Scanner scanner = new Scanner(System.in);
