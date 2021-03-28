@@ -60,7 +60,7 @@ public class Anna {
 		}
             }
         }
-        return ret; // each pair is double counted, want unordered
+        return ret;
     }
 
     private static final Scanner scanner = new Scanner(System.in);
