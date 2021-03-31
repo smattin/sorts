@@ -50,15 +50,22 @@ public class Swaps {
         for (int i=1; i <= arr.length; i++) {
             sorted[i-1] = i;
         }
-        List<Integer> list;
+        //List<Integer> list;
         for (int i: sorted) {
             // TODO: optimize pos calc to not require this - too slow    
-            list = Arrays.stream(arr).boxed().collect(java.util.stream.Collectors.toList());
+            //list = Arrays.stream(arr).boxed().collect(java.util.stream.Collectors.toList());
 	        //Swaps.debug.log(java.util.logging.Level.SEVERE,
             //    String.format("swap %d from %s",swaps,list.toString()));
             if (arr[i-1] != i) {
                 swaps += 1;
-                int pos = list.indexOf(i);
+                int pos = 0;
+                for (int j=i-1; j<arr.length; j++) {
+                    if (arr[j]==i) {
+                        pos = j;
+                        break;
+                    }
+
+                }
                 if (-1 == pos) {
 	                //Swaps.debug.log(java.util.logging.Level.SEVERE,
                     //                String.format("indexOf(%d) not found in swap %d from %s",i,swaps,list.toString()));
