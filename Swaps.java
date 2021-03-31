@@ -45,9 +45,28 @@ public class Swaps {
     // Complete the minimumSwaps function below.
     // https://www.hackerrank.com/challenges/minimum-swaps-2/problem
     public static int minimumSwaps(int[] arr) {
-        int ret = 0;
-
-        return ret;
+        int swaps = 0;
+        int sorted[] = Arrays.copyOf(arr,arr.length);
+        List<Integer> list;
+        Arrays.sort(sorted);
+        for (int i: sorted) {
+            list = Arrays.stream(arr).boxed().collect(java.util.stream.Collectors.toList());
+	        //Swaps.debug.log(java.util.logging.Level.SEVERE,
+            //    String.format("swap %d from %s",swaps,list.toString()));
+            if (arr[i-1] != i) {
+                swaps += 1;
+                int pos = list.indexOf(i);
+                if (-1 == pos) {
+	                //Swaps.debug.log(java.util.logging.Level.SEVERE,
+                    //                String.format("indexOf(%d) not found in swap %d from %s",i,swaps,list.toString()));
+                }
+	            //Swaps.debug.log(java.util.logging.Level.SEVERE,String.format("swap number %s between indexes %d %d",swaps,i-1,pos));
+                int temp = arr[i-1];
+                arr[i-1] = arr[pos];
+                arr[pos] = temp;
+             }
+         }
+         return swaps;
     }
 
     private static final Scanner scanner = new Scanner(System.in);
