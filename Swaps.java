@@ -46,10 +46,13 @@ public class Swaps {
     // https://www.hackerrank.com/challenges/minimum-swaps-2/problem
     public static int minimumSwaps(int[] arr) {
         int swaps = 0;
-        int sorted[] = Arrays.copyOf(arr,arr.length);
+        int[] sorted = new int[arr.length];
+        for (int i=1; i <= arr.length; i++) {
+            sorted[i-1] = i;
+        }
         List<Integer> list;
-        Arrays.sort(sorted);
         for (int i: sorted) {
+            // TODO: optimize pos calc to not require this - too slow    
             list = Arrays.stream(arr).boxed().collect(java.util.stream.Collectors.toList());
 	        //Swaps.debug.log(java.util.logging.Level.SEVERE,
             //    String.format("swap %d from %s",swaps,list.toString()));
