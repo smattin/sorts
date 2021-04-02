@@ -1,3 +1,4 @@
+#!/c/Users/steph/AppData/Local/Programs/Python/Python39/python
 import sys, getopt
 import logging
 import timeit
@@ -18,6 +19,7 @@ class Algorithm(Enum):
     * the only valid case with with no dups is range 1..n in any order
     * n==1 obviously has no duplicates
     """
+    NAIVE_SEEN = 'loop through testing/recording seen'
     SORTED_SCAN_SHORTCUT = 'sort, scan for repeats, and break on first found'
     SORTED_DUPS_LEN = 'sort, filter creating dups list, and check length'
     SEQ_SUM = 'check sum against the well-known expression for sum of 1..n'
@@ -32,6 +34,15 @@ def sort_scan(n,s):
             found = True
             break # 9.0
     return found
+
+def naive_seen(n,a):
+    "scan for repeats, breaking on first found"
+    seen = [False]*n;
+    for i in range(0,n-1):
+        if seen[a[i]]:
+            return True
+        seen[a[i]] = True
+    return False
 
 sc_warn = True # only warn once for n == 1
 
@@ -61,7 +72,9 @@ def dups(n,a,algo=Algorithm.SEQ_SUM):
         sc_warn = False
         return False # Duh!
 
-    if algo==Algorithm.SEQ_SUM:
+    if algo==Algorithm.NAIVE_SEEN:
+        found = naive_seen(n,a)
+    elif algo==Algorithm.SEQ_SUM:
         found = sum(a) != int((n)*(n+1)/2) # 1.7 secs in initial tests
     elif algo == Algorithm.SET_LEN:
         found = n != len(set(a)) # 2.3 secs
@@ -124,6 +137,7 @@ def main(argv):
         # algos ordered roughly by expected time complexity
         algos = [Algorithm.SEQ_SUM
                 ,Algorithm.SET_LEN
+                ,Algorithm.NAIVE_SEEN
                 ,Algorithm.ITER_UTIL
                 ,Algorithm.SORTED_SCAN_SHORTCUT
                 ,Algorithm.SORTED_DUPS_LEN
