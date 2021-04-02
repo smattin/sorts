@@ -10,22 +10,15 @@ import java.util.regex.*;
 
 public class Swaps {
 
-    static java.util.logging.Logger debug = java.util.logging.Logger.getGlobal();
-
     // Complete the minimumSwaps function below.
     // https://www.hackerrank.com/challenges/minimum-swaps-2/problem
     public static int minimumSwaps(int[] arr) {
         int swaps = 0;
-        int[] sorted = new int[arr.length];
+
         for (int i=1; i <= arr.length; i++) {
-            sorted[i-1] = i;
-        }
-        //List<Integer> list;
-        for (int i: sorted) {
-            //list = Arrays.stream(arr).boxed().collect(java.util.stream.Collectors.toList());
             if (arr[i-1] != i) {
                 swaps += 1;
-                int pos = 0;
+                int pos = -1;
                 for (int j=i-1; j<arr.length; j++) {
                     if (arr[j]==i) {
                         pos = j;
@@ -34,10 +27,9 @@ public class Swaps {
 
                 }
                 if (-1 == pos) {
-	                //Swaps.debug.log(java.util.logging.Level.SEVERE,
-                    //                String.format("indexOf(%d) not found in swap %d from %s",i,swaps,list.toString()));
+                    System.err.println(String.format("Error, {} not found in input array",i));
+                    System.exit(1);
                 }
-	            //Swaps.debug.log(java.util.logging.Level.SEVERE,String.format("swap number %s between indexes %d %d",swaps,i-1,pos));
                 int temp = arr[i-1];
                 arr[i-1] = arr[pos];
                 arr[pos] = temp;
