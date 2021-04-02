@@ -15,12 +15,12 @@ public class Swaps {
     public static int minimumSwaps(int[] arr) {
         int swaps = 0;
 
-        for (int i=1; i <= arr.length; i++) {
-            if (arr[i-1] != i) {
+        for (int i=1; i <= arr.length; i++) { // for each number in arr
+            if (arr[i-1] != i) { // if it is not already in the right place
                 swaps += 1;
                 int pos = -1;
                 for (int j=i-1; j<arr.length; j++) {
-                    if (arr[j]==i) {
+                    if (arr[j]==i) { // find where it is
                         pos = j;
                         break;
                     }
@@ -31,7 +31,7 @@ public class Swaps {
                     System.exit(1);
                 }
                 int temp = arr[i-1];
-                arr[i-1] = arr[pos];
+                arr[i-1] = arr[pos]; // and swap it into the right position
                 arr[pos] = temp;
              }
          }
