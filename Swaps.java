@@ -9,30 +9,28 @@ import java.util.concurrent.*;
 import java.util.regex.*;
 
 public class Swaps {
+    private static void debug(int[] arr) {
+            StringBuffer buf = new StringBuffer();
+            for (int num: arr) {
+                buf.append(num); buf.append(" ");
+            };
+            System.out.println(buf.toString());
+    }
 
     // Complete the minimumSwaps function below.
     // https://www.hackerrank.com/challenges/minimum-swaps-2/problem
     public static int minimumSwaps(int[] arr) {
         int swaps = 0;
 
-        for (int i=1; i <= arr.length; i++) { // for each number in arr
-            if (arr[i-1] != i) { // if it is not already in the right place
+        for (int i=0; i < arr.length; i++) { // for each place in the array
+            // debug(arr);
+            if (arr[i] != i+1) { // if the number found there is not correct
                 swaps += 1;
-                int pos = -1;
-                for (int j=i-1; j<arr.length; j++) {
-                    if (arr[j]==i) { // find where it is
-                        pos = j;
-                        break;
-                    }
-
-                }
-                if (-1 == pos) {
-                    System.err.println(String.format("Error, {} not found in input array",i));
-                    System.exit(1);
-                }
-                int temp = arr[i-1];
-                arr[i-1] = arr[pos]; // and swap it into the right position
-                arr[pos] = temp;
+                int temp = arr[i]; // swap that found number to it's right spot 
+                arr[i] = arr[temp-1];
+                arr[temp-1] = temp;
+                i--;
+                debug(arr);
              }
          }
          return swaps;
