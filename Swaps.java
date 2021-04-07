@@ -20,7 +20,7 @@ public class Swaps {
     // consecutive values with known least value (1) are a special sort,
     // since the value tells the correct position
     public static int minimumSwaps(int[] arr) {
-        int swaps = 0; // should be < number of values in wrong position - 1
+        int swaps = 0; // should be < number of values in wrong position
         int nsorted = 0; // array positions < nsorted are checked correct
 
         debug(arr);
