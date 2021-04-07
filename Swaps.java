@@ -28,10 +28,10 @@ public class Swaps {
             if (arr[nsorted] == nsorted+1) { // sorted
                     nsorted++;
             } else { // swap value at position nsorted to correct spot (value-1)
-                swaps += 1;
                 int value = arr[nsorted]; // swap positions value-1 and nsorted
                 arr[nsorted] = arr[value-1]; // and test swapped value next
                 arr[value-1] = value;
+                swaps += 1;
                 debug(arr);
              }
          }
