@@ -9,15 +9,17 @@ import java.util.concurrent.*;
 import java.util.regex.*;
 
 public class Swaps {
-    /*
+    //
     private static void debug(int[] arr) {
+        if (false) {
             StringBuffer buf = new StringBuffer();
             for (int num: arr) {
                 buf.append(num); buf.append(" ");
             };
             System.out.println(buf.toString());
+        }
     }
-    */
+    //
     /*
     // consecutive values with known least value (1) are a special sort,
     // since the value tells the correct position
@@ -32,21 +34,28 @@ public class Swaps {
     //
     // tricky part seems to be proving swaps will not loop
     */
+
+    // if we were not given min_value=1, we could scan array for it first
+    static final int min_value = 1;
+    private static int correct_position(int value) {
+        return value-min_value; // correct position for value
+    }
     public static int minimumSwaps(int[] arr) {
         int swaps = 0; // should be < number of values in wrong position
         int position = arr.length-1;
 
-        // debug(arr); // scan starting from right (arr.length-1) or left 0
+        debug(arr); // scan starting from right (arr.length-1) or left 0
         while (0 < position) { // check array positions from right
             int value = arr[position];
-            if (value != position+1) { // value at position incorrect
-                // swap value at position to correct spot (value-1)
-                arr[position] = arr[value-1]; // and test swapped value next
-                arr[value-1] = value;
+            int correct = correct_position(value);
+            if (correct == position) { // value at position is correct
+                 position--; // move to next position (left)
+            } else {
+                // swap value at position to correct spot
+                arr[position] = arr[correct]; // and test swapped value next
+                arr[correct] = value;
                 swaps += 1;
-                // debug(arr);
-             } else {
-                     position--; // value at position was correct, move left
+                debug(arr);
              }
          }
          return swaps; // O(n-1) because if n-1 are correct, the n'th is
