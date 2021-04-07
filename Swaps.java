@@ -17,23 +17,26 @@ public class Swaps {
             System.out.println(buf.toString());
     }
 
-    // Complete the minimumSwaps function below.
-    // https://www.hackerrank.com/challenges/minimum-swaps-2/problem
+    // consecutive values with known least value (1) are a special sort,
+    // since the value tells the correct position
     public static int minimumSwaps(int[] arr) {
-        int swaps = 0;
+        int swaps = 0; // should be < number of values in wrong position - 1
+        int nsorted = 0; // array positions < nsorted are checked correct
 
-        for (int i=0; i < arr.length; i++) { // for each place in the array
-            // debug(arr);
-            if (arr[i] != i+1) { // if the number found there is not correct
+        debug(arr);
+        while (nsorted < arr.length) {
+            if (arr[nsorted] == nsorted+1) { // sorted
+                    nsorted++;
+            } else { // swap value at position nsorted to correct spot (value-1)
                 swaps += 1;
-                int temp = arr[i]; // swap that found number to it's right spot 
-                arr[i] = arr[temp-1];
-                arr[temp-1] = temp;
-                i--;
+                int value = arr[nsorted]; // swap positions value-1 and nsorted
+                arr[nsorted] = arr[value-1]; // and test swapped value next
+                arr[value-1] = value;
                 debug(arr);
              }
          }
-         return swaps;
+         return swaps; // O(n-1) because if n-1 are correct, the n'th is
+         // example worst case: 2 3 4 5 6 7 1 takes 6 swaps starting from left
     }
 
     private static final Scanner scanner = new Scanner(System.in);
