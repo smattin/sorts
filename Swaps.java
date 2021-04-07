@@ -9,6 +9,7 @@ import java.util.concurrent.*;
 import java.util.regex.*;
 
 public class Swaps {
+    /*
     private static void debug(int[] arr) {
             StringBuffer buf = new StringBuffer();
             for (int num: arr) {
@@ -16,12 +17,23 @@ public class Swaps {
             };
             System.out.println(buf.toString());
     }
-
+    */
+    /*
     // consecutive values with known least value (1) are a special sort,
     // since the value tells the correct position
+    //
+    // scan array (from left or right) checking if value position is correct,
+    // if not then swap the value with the one in it's correct position
+    // else move to check next position
+    //
+    // TODO: prove this gives all and minimum swaps, since
+    // every swap fixes at least one incorrect position
+    // and position corrections are never undone
+    //
+    // tricky part seems to be proving swaps will not loop
+    */
     public static int minimumSwaps(int[] arr) {
         int swaps = 0; // should be < number of values in wrong position
-        int nsorted = 0; // array positions < nsorted are checked correct
         int position = arr.length-1;
 
         // debug(arr); // scan starting from right (arr.length-1) or left 0
