@@ -23,8 +23,8 @@ public class Swaps {
         int swaps = 0; // should be < number of values in wrong position
         int nsorted = 0; // array positions < nsorted are checked correct
 
-        debug(arr);
-        while (nsorted < arr.length) {
+        debug(arr); // scanning could start either right (arr.length-1) or left
+        while (nsorted < arr.length) { // scan array from left (position 0)
             if (arr[nsorted] == nsorted+1) { // sorted
                     nsorted++;
             } else { // swap value at position nsorted to correct spot (value-1)
