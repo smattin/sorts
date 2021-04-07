@@ -24,8 +24,9 @@ public class Swaps {
     // consecutive values with known least value (1) are a special sort,
     // since the value tells the correct position
     //
-    // scan array (from left or right) checking if value position is correct,
-    // if not then swap the value with the one in it's correct position
+    // for each position, checking if value at position is correct,
+    //   if not then swap the value with the one in it's correct position
+    //   while the new value at position is not correct, move it
     // else move to check next position
     //
     // TODO: prove this gives all and minimum swaps, since
@@ -40,23 +41,48 @@ public class Swaps {
     private static int correct_position(int value) {
         return value-min_value; // correct position for value
     }
-    public static int minimumSwaps(int[] arr) {
-        int swaps = 0; // should be < number of values in wrong position
-        int position = arr.length-1;
+    public static void swap(int i,int j, int[] arr) {
+            int[] ij = {i,j};
+            //debug(ij);
+            //debug(arr);
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+            debug(arr);
+    }
 
-        debug(arr); // scan starting from right (arr.length-1) or left 0
-        while (0 < position) { // check array positions from right
-            int value = arr[position];
-            int correct = correct_position(value);
-            if (correct == position) { // value at position is correct
-                 position--; // move to next position (left)
-            } else {
-                // swap value at position to correct spot
-                arr[position] = arr[correct]; // and test swapped value next
-                arr[correct] = value;
-                swaps += 1;
-                debug(arr);
-             }
+    // keep swapping incorrect values at pos in arr to their correct positions
+    // results in the correct value at pos in arr
+    // and returns the number of swaps performed
+    public static int swap_incorrect_values(int pos,int[] arr) {
+        int swaps = 0;
+
+        int value = arr[pos];
+        int correct = correct_position(value);
+        while (pos != correct) {
+            swap(pos,correct,arr);
+            swaps++;
+
+            // as long as we don't undo swaps, loop terminates
+            value = arr[pos]; // swapped value
+            correct = correct_position(value); // update correct position
+        }
+        return swaps;
+    }
+
+    public static int minimumSwaps(int[] arr) {
+        int swaps = 0;
+        // select a random position in array without replacement
+        //     get the correct value into that position
+        //     recording the number of swaps it took
+        // repeat
+
+        debug(arr);
+
+        //debug(pos(arr));
+        for (int element: arr) { // hack: use array values to iterate positions
+            int position = correct_position(element); // select any position
+            swaps += swap_incorrect_values(position,arr);
          }
          return swaps; // O(n-1) because if n-1 are correct, the n'th is
          // example worst case: 2 3 4 5 6 7 1 takes 6 swaps starting from left
