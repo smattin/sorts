@@ -22,17 +22,19 @@ public class Swaps {
     public static int minimumSwaps(int[] arr) {
         int swaps = 0; // should be < number of values in wrong position
         int nsorted = 0; // array positions < nsorted are checked correct
+        int position = arr.length-1;
 
-        debug(arr); // scanning could start either right (arr.length-1) or left
-        while (nsorted < arr.length) { // scan array from left (position 0)
-            if (arr[nsorted] == nsorted+1) { // sorted
-                    nsorted++;
-            } else { // swap value at position nsorted to correct spot (value-1)
-                int value = arr[nsorted]; // swap positions value-1 and nsorted
-                arr[nsorted] = arr[value-1]; // and test swapped value next
+        // debug(arr); // scan starting from right (arr.length-1) or left 0
+        while (0 < position) { // check array positions from right
+            int value = arr[position];
+            if (value != position+1) { // value at position incorrect
+                // swap value at position to correct spot (value-1)
+                arr[position] = arr[value-1]; // and test swapped value next
                 arr[value-1] = value;
                 swaps += 1;
-                debug(arr);
+                // debug(arr);
+             } else {
+                     position--; // value at position was correct, move left
              }
          }
          return swaps; // O(n-1) because if n-1 are correct, the n'th is
