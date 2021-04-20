@@ -123,18 +123,6 @@ public class Swaps {
         // repeat
 
         debug(arr);
-
-        /* if array is large, maybe use multiple concurrent tasks
-         * for subsets of positions
-         * (not of array because values might not belong in subset)
-         *
-
-        for (int element: arr) { // hack: use array values to iterate positions
-            int position = correct_position(element); // select any position
-            swaps += swap_incorrect_values(position,arr);
-         }
-
-         */
         /*
          for a large input array, run swapper in parallel on subsets of positions
          NOT on subsets of array because the correct positions might not be in subset
@@ -177,7 +165,7 @@ public class Swaps {
         }
 
         return swaps; // O(n-1) because if n-1 are correct, the n'th is
-        // example worst case: 2 3 4 5 6 7 1 takes 6 swaps starting from left
+        // example worst case: 2 3 4 5 6 7 1 takes 6 swaps
     }
 
     private static final Scanner scanner = new Scanner(System.in);
