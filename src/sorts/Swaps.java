@@ -33,15 +33,20 @@ public class Swaps {
             System.out.println(buf.toString());
         }
     }
-    //
     /*
     // consecutive values with known least value (1) are a special sort,
     // since the value tells the correct position
     //
-    // for each position, checking if value at position is correct,
-    //   if not then swap the value with the one in it's correct position
+    // for each position, check
+    //   if value at position is correct,
+    //   then move to check next position
+    //   else swap that position with one at the value
     //   while the new value at position is not correct, move it
-    // else move to check next position
+    //   check next position
+    //
+    // NOTE: the order of positions checked should not matter,
+    // but all except the last need checking.
+    // The last will be correct if all the others are.
     //
     // TODO: prove this gives all and minimum swaps, since
     // every swap fixes at least one incorrect position
