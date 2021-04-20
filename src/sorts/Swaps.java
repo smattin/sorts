@@ -125,7 +125,11 @@ public class Swaps {
         IntStream positions = IntStream.range(min, max);
         if (arr.length > max_positions) {
 
-            int nThreads = arr.length / max_positions + 1;
+            int nThreads = arr.length / max_positions;
+            if (arr.length % max_positions != 0) {
+                nThreads += 1;
+            }
+
             ExecutorService executor = Executors.newFixedThreadPool(nThreads);
             List<Callable<Integer>> tasks = new ArrayList<>(nThreads);
 
