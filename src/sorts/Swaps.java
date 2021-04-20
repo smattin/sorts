@@ -10,22 +10,17 @@ public class Swaps {
     static final boolean verbose = false; // TODO: command line option?
     static boolean testing = true;
 
-    private static void debug(int[] arr, int[] positions) {
+    private static void debug(int[] arr, IntStream positions) {
         if (verbose) {
-            Arrays.sort(positions, 0, positions.length);
-            StringBuffer buf = new StringBuffer();
-            for (int pos : positions) {
-                buf.append(arr[pos]);
-                buf.append(" ");
-            }
-            ;
+            StringBuilder buf = new StringBuilder();
+            positions.sorted().forEach(pos -> buf.append(arr[pos]).append(" "));
             System.out.println(buf.toString());
         }
     }
 
     private static void debug(int[] arr) {
         if (verbose) {
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             for (int num : arr) {
                 buf.append(num);
                 buf.append(" ");
@@ -66,9 +61,6 @@ public class Swaps {
     static final int max_positions = testing? 6: 10000000;
 
     public static void swap(int i, int j, int[] arr) {
-        int[] ij = {i, j};
-        //debug(ij);
-        //debug(arr);
         int temp = arr[i];
         arr[i] = arr[j];
         arr[j] = temp;
@@ -95,14 +87,15 @@ public class Swaps {
     }
 
     public static int minimumSwaps(int[] arr, IntStream positions) {
+        debug(arr,positions);
         return positions
                 .map(pos -> swap_incorrect_values(pos, arr))
                 .sum();
     }
 
-    public class Swapper implements Callable<Integer> {
-        private int[] array;
-        private IntStream positions;
+    private static class Swapper implements Callable<Integer> {
+        private final int[] array;
+        private final IntStream positions;
 
         public Swapper(int[] array, IntStream positions) {
             this.array = array;
@@ -110,7 +103,7 @@ public class Swaps {
         }
 
         @Override
-        public Integer call() throws Exception {
+        public Integer call() {
             return minimumSwaps(array, positions);
         }
     }
@@ -134,7 +127,7 @@ public class Swaps {
 
             int nThreads = arr.length / max_positions + 1;
             ExecutorService executor = Executors.newFixedThreadPool(nThreads);
-            List<Callable<Integer>> tasks = new ArrayList<Callable<Integer>>(nThreads);
+            List<Callable<Integer>> tasks = new ArrayList<>(nThreads);
 
             // create tasks for array position subsets of max_positions
             while (min < max) {
@@ -150,21 +143,21 @@ public class Swaps {
             }
 
             // execute tasks and sum returned swap counts
-            swaps = executor.invokeAll(tasks).stream().map(f -> {
+            swaps = executor.invokeAll(tasks).stream().map(futureSwapCount -> {
                 try {
-                    return f.get();
+                    return futureSwapCount.get();
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
                 return 0;
-            }).mapToInt(i -> i).sum();
+            }).mapToInt(i -> i).sum(); // unbox Integers and sum counts of swaps
 
             executor.shutdown();
-        } else {
+        } else { // logically redundant, but probably more efficient
             swaps += minimumSwaps(arr, positions);
         }
 
-        return swaps; // O(n-1) because if n-1 are correct, the n'th is
+        return swaps; // O(n-1) because if n-1 are correct, the nth is
         // example worst case: 2 3 4 5 6 7 1 takes 6 swaps
     }
 
