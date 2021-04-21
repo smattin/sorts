@@ -9,8 +9,8 @@ import org.apache.commons.cli.*;
 
 public class Swaps {
     //
-    static boolean verbose = false; // TODO: command line option?
-    static boolean testing = true; // TODO: command line option?
+    static boolean verbose = false; // command line option '-v'
+    static boolean testing = false; // command line option '-t'
 
     private static void debug(int[] arr, IntStream positions) {
         if (verbose) {
