@@ -1,5 +1,7 @@
 package sorts;
 
+import org.apache.commons.cli.ParseException;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -8,6 +10,13 @@ import java.util.Scanner;
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
     public static void main(String[] args) throws IOException, InterruptedException {
+
+        try {
+            Swaps.options(args);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(System.out));
 
         int n = scanner.nextInt();
@@ -23,7 +32,7 @@ public class Main {
             arr[i] = arrItem;
         }
 
-        int result = new sorts.Swaps().minimum(arr);
+        int result = Swaps.minimum(arr);
 
         bufferedWriter.write(String.valueOf(result));
         bufferedWriter.newLine();

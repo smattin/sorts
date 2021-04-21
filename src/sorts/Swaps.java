@@ -5,10 +5,12 @@ import java.util.*;
 import java.util.stream.*;
 import java.util.concurrent.*;
 
+import org.apache.commons.cli.*;
+
 public class Swaps {
     //
     static final boolean verbose = false; // TODO: command line option?
-    static boolean testing = true;
+    static boolean testing = true; // TODO: command line option?
 
     private static void debug(int[] arr, IntStream positions) {
         if (verbose) {
@@ -58,7 +60,7 @@ public class Swaps {
     }
 
     // if array.length greater max_array, split
-    static final int max_positions = testing? 6: 10000000;
+    public static int max_positions = 10000000;
 
     public static void swap(int i, int j, int[] arr) {
         int temp = arr[i];
@@ -108,7 +110,16 @@ public class Swaps {
         }
     }
 
-    public int minimum(int[] arr) throws InterruptedException {
+    // calculate number of threads to use
+    public static int concurrency(int[] arr) {
+        // TODO: factor in system resources (cores)
+        int nThreads = arr.length / max_positions;
+        if (arr.length % max_positions != 0) {
+            nThreads += 1;
+        }
+        return nThreads;
+    }
+    public static int minimum(int[] arr) throws InterruptedException {
         int swaps = 0;
         // select a random position in array without replacement
         //     get the correct value into that position
@@ -123,12 +134,8 @@ public class Swaps {
         int min = 0;
         int max = arr.length;
         IntStream positions = IntStream.range(min, max);
-        if (arr.length > max_positions) {
-
-            int nThreads = arr.length / max_positions;
-            if (arr.length % max_positions != 0) {
-                nThreads += 1;
-            }
+        int nThreads = concurrency(arr);
+        if (1 < nThreads) {
 
             ExecutorService executor = Executors.newFixedThreadPool(nThreads);
             List<Callable<Integer>> tasks = new ArrayList<>(nThreads);
@@ -148,7 +155,7 @@ public class Swaps {
 
             // execute tasks and sum returned swap counts
             swaps = executor.invokeAll(tasks).stream().map(futureSwapCount -> {
-                try {
+                try { // why can't we move exception handling out?
                     return futureSwapCount.get();
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
@@ -167,7 +174,23 @@ public class Swaps {
 
     private static final Scanner scanner = new Scanner(System.in);
 
+    public static void options(String[] args) throws ParseException {
+        Options options = new Options();
+
+        options.addOption("t", false, "run tests");
+        CommandLineParser parser = new DefaultParser();
+        CommandLine cmd = parser.parse( options, args);
+
+        testing = cmd.hasOption("t");
+    }
+
     public static void main(String[] args) throws IOException, InterruptedException {
+        try {
+            options(args);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(System.out));
 
         int n = scanner.nextInt();
@@ -183,7 +206,7 @@ public class Swaps {
             arr[i] = arrItem;
         }
 
-        int result = new Swaps().minimum(arr);
+        int result = Swaps.minimum(arr);
 
         bufferedWriter.write(String.valueOf(result));
         bufferedWriter.newLine();
