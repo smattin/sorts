@@ -9,7 +9,7 @@ import org.apache.commons.cli.*;
 
 public class Swaps {
     //
-    static final boolean verbose = false; // TODO: command line option?
+    static boolean verbose = false; // TODO: command line option?
     static boolean testing = true; // TODO: command line option?
 
     private static void debug(int[] arr, IntStream positions) {
@@ -178,10 +178,12 @@ public class Swaps {
         Options options = new Options();
 
         options.addOption("t", false, "run tests");
+        options.addOption("v", false, "verbose");
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse( options, args);
 
         testing = cmd.hasOption("t");
+        verbose = cmd.hasOption("v");
     }
 
     public static void main(String[] args) throws IOException, InterruptedException {
