@@ -1,6 +1,7 @@
 package sorts;
 
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
+import org.junit.runner.*;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -9,12 +10,42 @@ import java.util.Scanner;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
+
+
+    public static Options options() {
+        Options options = new Options();
+
+        options.addOption("t", false, "run tests");
+        options.addOption("v", false, "verbose");
+        options.addOption(Option.builder("p")
+                .longOpt( "max_positions" )
+                .desc( "use this SIZE partitions of array when calculating swaps"  )
+                .hasArg()
+                .argName( "SIZE" )
+                .build());
+
+        return options;
+    }
+
     public static void main(String[] args) throws IOException, InterruptedException {
 
+        Options options = options();
         try {
-            Swaps.options(args);
+            CommandLine cmd = new DefaultParser().parse( options, args);
+            if (cmd.hasOption("t")) {
+                Swaps.testing = true;
+                JUnitCore.main("sorts.TestSwaps");
+            }
+
+            Swaps.verbose = cmd.hasOption("v");
+            if (cmd.hasOption("max_positions")) {
+                Swaps.max_positions = Integer.parseInt(cmd.getOptionValue("max_positions"));
+            }
         } catch (ParseException e) {
-            e.printStackTrace();
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp( "swaps", options );
+            System.exit(1);
+            // e.printStackTrace();
         }
 
         BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(System.out));

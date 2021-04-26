@@ -1,24 +1,18 @@
 package sorts;
 
-import java.io.*;
-import java.util.*;
-import java.util.stream.*;
-import java.util.concurrent.*;
-
-import org.apache.commons.cli.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.IntStream;
 
 public class Swaps {
     //
     static boolean verbose = false; // command line option '-v'
     static boolean testing = false; // command line option '-t'
-
-    private static void debug(int[] arr, IntStream positions) {
-        if (verbose) {
-            StringBuilder buf = new StringBuilder();
-            positions.sorted().forEach(pos -> buf.append(arr[pos]).append(" "));
-            System.out.println(buf.toString());
-        }
-    }
 
     private static void debug(int[] arr) {
         if (verbose) {
@@ -27,7 +21,7 @@ public class Swaps {
                 buf.append(num);
                 buf.append(" ");
             }
-            System.out.println(buf.toString());
+            System.out.println(buf);
         }
     }
     /*
@@ -89,7 +83,7 @@ public class Swaps {
     }
 
     public static int minimumSwaps(int[] arr, IntStream positions) {
-        debug(arr,positions);
+        // debug(arr, positions);
         return positions
                 .map(pos -> swap_incorrect_values(pos, arr))
                 .sum();
@@ -134,6 +128,7 @@ public class Swaps {
         int min = 0;
         int max = arr.length;
         IntStream positions = IntStream.range(min, max);
+
         int nThreads = concurrency(arr);
         if (1 < nThreads) {
 
@@ -172,49 +167,7 @@ public class Swaps {
         // example worst case: 2 3 4 5 6 7 1 takes 6 swaps
     }
 
-    private static final Scanner scanner = new Scanner(System.in);
-
-    public static void options(String[] args) throws ParseException {
-        Options options = new Options();
-
-        options.addOption("t", false, "run tests");
-        options.addOption("v", false, "verbose");
-        CommandLineParser parser = new DefaultParser();
-        CommandLine cmd = parser.parse( options, args);
-
-        testing = cmd.hasOption("t");
-        verbose = cmd.hasOption("v");
-    }
-
     public static void main(String[] args) throws IOException, InterruptedException {
-        try {
-            options(args);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(System.out));
-
-        int n = scanner.nextInt();
-        scanner.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
-
-        int[] arr = new int[n];
-
-        String[] arrItems = scanner.nextLine().split(" ");
-        scanner.skip("(\r\n|[\n\r\u2028\u2029\u0085])?");
-
-        for (int i = 0; i < n; i++) {
-            int arrItem = Integer.parseInt(arrItems[i]);
-            arr[i] = arrItem;
-        }
-
-        int result = Swaps.minimum(arr);
-
-        bufferedWriter.write(String.valueOf(result));
-        bufferedWriter.newLine();
-
-        bufferedWriter.close();
-
-        scanner.close();
+        Main.main(args);
     }
 }
