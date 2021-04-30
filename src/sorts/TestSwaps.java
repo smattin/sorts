@@ -1,7 +1,7 @@
 package sorts;
 
 // import org.junit.jupiter.api.Test;
-import org.junit.Test;
+import org.junit.Test;  // JUnit4 test runner
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestSwaps {

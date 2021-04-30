@@ -56,28 +56,33 @@ public class Swaps {
     // if array.length greater max_array, split
     public static int max_positions = 10000000;
 
-    public static void swap(int i, int j, int[] arr) {
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-        debug(arr);
+    /* TODO: apart from debugging support,
+     *   it should not be necessary to actually perform swaps,
+     *   just to figure out how many are needed
+     */
+    public static int swap(int i, int j, int[] arr) {
+        // swap values at positions i and j in arr
+        // return the swapped value arr[j]
+        int temp = arr[j];
+        // if (verbose) {
+            arr[j] = arr[i];
+            arr[i] = temp;
+            debug(arr);
+        // }
+        return temp;
     }
 
     // keep swapping incorrect values at pos in arr to their correct positions
     // results in the correct value at pos in arr
     // and returns the number of swaps performed
-    public static int swap_incorrect_values(int pos, int[] arr) {
+    public static int swap_incorrect_values(int position, int[] array) {
         int swaps = 0;
 
-        int value = arr[pos];
-        int correct = correct_position(value);
-        while (pos != correct) {
-            swap(pos, correct, arr);
+        int value = array[position];
+        while (position != correct_position(value)) {
+            value = swap(position, correct_position(value), array);
             swaps++;
-
             // as long as we don't undo swaps, loop terminates
-            value = arr[pos]; // swapped value
-            correct = correct_position(value); // update correct position
         }
         return swaps;
     }

@@ -5,13 +5,26 @@ import java.math.*;
 import java.security.*;
 import java.text.*;
 import java.util.*;
+import java.util.stream.*;
 import java.util.concurrent.*;
 import java.util.regex.*;
 
 public class Swaps {
     //
+    static final boolean verbose = true;
+
+    private static void debug(int[] arr, int[] positions) {
+        if (verbose) {
+            Arrays.sort(positions,0,positions.length);
+            StringBuffer buf = new StringBuffer();
+            for (int pos: positions) {
+                buf.append(arr[pos]); buf.append(" ");
+            };
+            System.out.println(buf.toString());
+        }
+    }
     private static void debug(int[] arr) {
-        if (false) {
+        if (verbose) {
             StringBuffer buf = new StringBuffer();
             for (int num: arr) {
                 buf.append(num); buf.append(" ");
@@ -47,6 +60,8 @@ public class Swaps {
     private static int correct_position(int value) {
         return value-min_value; // correct position for value
     }
+    static final int max_array = 6; // if array.length greater max_array, split
+
     public static void swap(int i,int j, int[] arr) {
             int[] ij = {i,j};
             //debug(ij);
@@ -76,7 +91,27 @@ public class Swaps {
         return swaps;
     }
 
-    public static int minimumSwaps(int[] arr) {
+    public static int minimumSwaps(int[] arr, IntStream positions) {
+        return positions
+               .map(pos ->  swap_incorrect_values(pos,arr))
+               .sum();
+    }
+
+    public class Swapper implements Callable<Integer> {
+        private int[] array;
+        private IntStream positions;
+
+        public Swapper(int[] array, IntStream positions) {
+            this.array = array;
+            this.positions = positions;
+        }
+        @Override
+        public Integer call() throws Exception {
+            return minimumSwaps(array,positions);
+        }
+    }
+
+    public int minimumSwaps(int[] arr) throws InterruptedException  {
         int swaps = 0;
         // select a random position in array without replacement
         //     get the correct value into that position
@@ -85,18 +120,59 @@ public class Swaps {
 
         debug(arr);
 
-        //debug(pos(arr));
+        /* if array is large, maybe use multiple concurrent tasks
+         * for subsets of positions
+         * (not of array because values might not belong in subset)
+         *
+
         for (int element: arr) { // hack: use array values to iterate positions
             int position = correct_position(element); // select any position
             swaps += swap_incorrect_values(position,arr);
          }
-         return swaps; // O(n-1) because if n-1 are correct, the n'th is
-         // example worst case: 2 3 4 5 6 7 1 takes 6 swaps starting from left
+
+         */
+
+        if (arr.length > max_array) {
+            int nThreads = arr.length/max_array+1;
+             ExecutorService executor=Executors.newFixedThreadPool(nThreads);
+             List<Future<Integer>> swapCounts = new ArrayList<Future<Integer>>();
+
+            int min = 0;
+            int max = arr.length;
+            while (min < max) {
+    
+                max = Math.min(arr.length,min+max_array);
+     
+                //System.err.println(String.format("min %d max %d",min,max));
+                IntStream positions = IntStream.range(min,max);
+                Swapper task = new Swapper(arr,positions);
+                Future<Integer> nSwaps = executor.submit(task);
+                swapCounts.add(nSwaps);
+    
+                min = max;
+                max = Math.min(arr.length,max+max_array);
+            }
+            swaps = swapCounts.stream().map(f -> {
+                try {
+                    return f.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
+                return 0;
+            }).mapToInt(i -> i).sum();
+        } else {
+            swaps += minimumSwaps(arr, IntStream.range(0,arr.length));
+        }
+
+        return swaps; // O(n-1) because if n-1 are correct, the n'th is
+        // example worst case: 2 3 4 5 6 7 1 takes 6 swaps starting from left
     }
 
     private static final Scanner scanner = new Scanner(System.in);
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(System.out));
 
         int n = scanner.nextInt();
@@ -112,7 +188,7 @@ public class Swaps {
             arr[i] = arrItem;
         }
 
-        int result = minimumSwaps(arr);
+        int result = new Swaps().minimum(arr);
 
         bufferedWriter.write(String.valueOf(result));
         bufferedWriter.newLine();
