@@ -1,13 +1,14 @@
 package sorts;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class Swaps {
     //
@@ -72,26 +73,39 @@ public class Swaps {
         return temp;
     }
 
-    // keep swapping incorrect values at pos in arr to their correct positions
-    // results in the correct value at pos in arr
-    // and returns the number of swaps performed
-    public static int swap_incorrect_values(int position, int[] array) {
-        int swaps = 0;
+    // keep swapping incorrect values at position in array to their correct positions
+    // corrects position for all incorrect values swapped to that position in array
+    // and return array of corrected positions for each swap
+    public static List<Integer> swap_incorrect_values(int position, int[] array) {
+        List<Integer> swaps = new ArrayList<>(array.length);
 
         int value = array[position];
         while (position != correct_position(value)) {
             value = swap(position, correct_position(value), array);
-            swaps++;
+            swaps.add(value);
             // as long as we don't undo swaps, loop terminates
         }
         return swaps;
     }
 
-    public static int minimumSwaps(int[] arr, IntStream positions) {
-        // debug(arr, positions);
+    public static int minimumSwaps(int[] array, IntStream positions) {
+        int swaps = 0;
+        Set<Integer> positionsToCheck = positions.boxed().collect(Collectors.toSet());
+        while (!positionsToCheck.isEmpty()) {
+            Integer pos = positionsToCheck.iterator().next(); // choose position
+            positionsToCheck.remove(pos); // without replacement
+
+            List<Integer> fixedPositions = swap_incorrect_values(pos, array);
+            swaps += fixedPositions.size();
+            fixedPositions.forEach(positionsToCheck::remove);
+        }
+        return swaps;
+        /*
         return positions
-                .map(pos -> swap_incorrect_values(pos, arr))
+                .map(pos -> swap_incorrect_values(pos, array).size())
                 .sum();
+
+         */
     }
 
     private static class Swapper implements Callable<Integer> {
